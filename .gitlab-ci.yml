@@ -1,0 +1,95 @@
+--- # ============================================================== config ===
+
+# include:
+#   - project: 
+#     file: 
+
+
+stages:
+  # ci pipeline
+  - build # build terraform remote state and meta data run
+  - test # terraform plan
+  - release # tag commit with version and bump versioning  
+  # cd pipeline
+  - publish #artificats to remote
+  - nonprod  #deploy to non production
+  - nonprod:approve #verify deployment to nonproduction
+  - prod  # deploy to production
+  - prod:approve #verify deployment to production
+
+
+variables:
+  NAMESPACE: na-corp-aws-billing
+  CLIENT_URI: https://
+  AWS_DEFAULT_REGION: us-east-1
+
+
+# ================================================================ snippets ===
+.snippets:  
+  .set-shared-vars: &snippet_set_shared_vars
+    - export TF_VAR_NAMESPACE=$NAMESPACE
+    - printenv | grep -E "^(ACCOUNT_|CORE_)" | sort
+    - ''  
+  .snippet_print_deployer_info: &snippet_print_deployer_info
+    - '#--- print deployer user info -----------------------------------------'
+    - aws sts get-caller-identity || true
+    - ''
+  .snippet_download_client: &snippet_download_client
+    - '#--- download client for meta data ------------------------------------'
+    - curl -o snowflake_ci_meta.py $CLIENT_URI
+    - ''    
+  .print-ci-vars: &snippet_print_ci_vars
+    - '# --- print ci variables ----------------------------------------------'
+    - printenv | grep -E "^(CI_|GITLAB_)" | sort
+    - ''    
+
+# =============================================================== templates ===    
+
+.job-terraform-build-state-data:
+  script:
+    - *snippet_set_shared_vars
+    - *snippet_print_ci_vars
+    - *snippet_download_client
+    - "# --- set variables ---------------------------------------------------"    
+    - metavar=$(printenv | grep -E "^(ACCOUNT_|REGION_|BILLING_|CI_|JOB_|CMS_)" | sort)    
+    - "#----------------- build meta data ------------------------------------"
+    - echo "building meta data state"
+    - >
+      jq -n -c -M --arg var "$metavar" '{"meta": ($var|split("\n"))}' | sed -e 's/=/:/g' >> meta.json
+    - cat meta.json    
+    - python3 meta.json
+
+.job-terraform-test:    
+  script:
+    - *snippet_set_shared_vars
+    - *snippet_print_deployer_info
+    - *snippet_print_ci_vars
+    - "#----------------- run terraform plan ---------------------------------"
+    - terraform plan #all the variables 
+
+.job-terraform-deploy:
+  variables:
+    PLACEHOLDER: placeholder
+  script:
+    - *snippet_set_shared_vars
+    - *snippet_print_deployer_info
+    - *snippet_print_ci_vars
+    - "#----------------- run terraform plan ---------------------------------"
+    - terraform plan #all the variables 
+    - terraform apply
+
+.job-resource-verification:
+  variables:
+    PLACEHOLDER: placeholder
+  script:
+    - *snippet_set_shared_vars
+    - *snippet_print_deployer_info
+    - *snippet_print_ci_vars    
+
+# =============================================================== pipelines ===
+
+# ============================================================= ci-overrides ===
+
+
+
+# ============================================================= cd-pipeline ===    
