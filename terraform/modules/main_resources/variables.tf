@@ -1,34 +1,26 @@
-variable "SNOWFLAKE_USER_UM" {
-    description = "user for management of users"
-    type        = string    
-}
+variable "SNOWFLAKE_USER_UM" {}
 
-variable "SNOWFLAKE_ROLE_UM" {
-    description = "user for management of users"
-    type        = string    
-}
+variable "SNOWFLAKE_PASS_UM"{}
 
-variable "SNOWFLAKE_USER_OPS" {
-    description = "user for management of users"
-    type        = string    
-}
+variable "SNOWFLAKE_ROLE_UM" {}
 
-variable "SNOWFLAKE_ROLE_OPS" {
-    description = "user for management of users"
-    type        = string    
-}
+variable "SNOWFLAKE_USER_OPS" {}
 
-variable "SNOWFLAKE_USER_DDL" {
-    description = "user for management of users"
-    type        = string    
-}
+variable "SNOWFLAKE_PASS_OPS"{}
 
-variable "SNOWFLAKE_ROLE_DDL" {
-    description = "user for management of users"
-    type        = string    
-}
+variable "SNOWFLAKE_ROLE_OPS" {}
+
+variable "SNOWFLAKE_USER_DDL" {}
+
+variable "SNOWFLAKE_PASS_DDL"{}
+
+variable "SNOWFLAKE_ROLE_DDL" {}
+
+variable "AWS_DEFAULT_REGION" {}
+
+variable "SNOWFLAKE_ACCOUNT" {}
 
 variable "SNOWFLAKE_STORAGE_INT" {
-    description = "user for management of users"
-    type        = string    
+  description = "Snowflake int user"
+  type        = string
 }

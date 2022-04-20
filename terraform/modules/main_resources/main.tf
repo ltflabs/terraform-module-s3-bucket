@@ -16,27 +16,33 @@ terraform {
 #####################################################
 
 provider "aws" {
-  region = var.aws_default_region
+  region = var.AWS_DEFAULT_REGION
 }
 
 provider "snowflake" {
   alias = "snowflake_user_mangt"
 
+  account = var.SNOWFLAKE_ACCOUNT
   username = var.SNOWFLAKE_USER_UM
+  password = var.SNOWFLAKE_PASS_UM
   role     = var.SNOWFLAKE_ROLE_UM
 }
 
 provider "snowflake" {
   alias = "snowflake_ops"
 
+  account = var.SNOWFLAKE_ACCOUNT
   username = var.SNOWFLAKE_USER_OPS
+  password = var.SNOWFLAKE_PASS_OPS
   role     = var.SNOWFLAKE_ROLE_OPS
 }
 
 provider "snowflake" {
   alias = "snowflake_ddl"
 
+  account = var.SNOWFLAKE_ACCOUNT
   username = var.SNOWFLAKE_USER_DDL
+  password = var.SNOWFLAKE_PASS_DDL          
   role     = var.SNOWFLAKE_ROLE_DDL
 }
 
